@@ -1,0 +1,1542 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Cadence IAM Service API",
+    "description": "OpenAPI specification for the Cadence Identity and Access Management (IAM) service.",
+    "contact": {
+      "name": "Cadence Labs"
+    },
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/account": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "operationId": "get_account_controller",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_CensoredAccountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input / Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [
+                    {
+                      "detailed_feedback": "Must be a valid UUID.",
+                      "source": "query.id"
+                    }
+                  ],
+                  "error": {
+                    "input": {
+                      "invalid_field": "Validation failed"
+                    }
+                  },
+                  "message": "Input validation failed for query_params"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [],
+                  "error": {
+                    "entity": {
+                      "not_found": "account with ID 123e4567-e89b-12d3-a456-426614174000 not found"
+                    }
+                  },
+                  "message": "account not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [],
+                  "error": {
+                    "database": {
+                      "retrieval_error": "account"
+                    }
+                  },
+                  "message": "Failed to retrieve account due to an internal error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "operationId": "create_account_controller",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Account created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input / Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [
+                    {
+                      "detailed_feedback": "Must be a valid email address.",
+                      "source": "body.email"
+                    }
+                  ],
+                  "error": {
+                    "input": {
+                      "invalid_format": "email"
+                    }
+                  },
+                  "message": "Input validation failed"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict (e.g., email already exists)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [
+                    {
+                      "detailed_feedback": "An account with this email address already exists.",
+                      "source": "body.email"
+                    }
+                  ],
+                  "error": {
+                    "entity": {
+                      "already_exists": "Account with email 'user@example.com' already exists"
+                    }
+                  },
+                  "message": "Account creation conflict"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [],
+                  "error": {
+                    "database": {
+                      "insertion_error": "account"
+                    }
+                  },
+                  "message": "Failed to create account"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Account"
+        ],
+        "operationId": "update_account_controller",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Account updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_CensoredAccountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input / Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [
+                    {
+                      "detailed_feedback": "Name cannot be empty.",
+                      "source": "body.name"
+                    }
+                  ],
+                  "error": {
+                    "input": {
+                      "invalid_value": "Validation failed"
+                    }
+                  },
+                  "message": "Input validation failed for body"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Cannot update another user's account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [],
+                  "error": {
+                    "auth": {
+                      "unauthorized": "Authenticated user does not match target account ID"
+                    }
+                  },
+                  "message": "Permission denied"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [],
+                  "error": {
+                    "entity": {
+                      "not_found": "account with ID 123e4567-e89b-12d3-a456-426614174000 not found"
+                    }
+                  },
+                  "message": "account not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [],
+                  "error": {
+                    "database": {
+                      "update_error": "account"
+                    }
+                  },
+                  "message": "Failed to update account"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ]
+      }
+    },
+    "/accounts": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "operationId": "get_accounts_controller",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Accounts retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Vec_CensoredAccountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input / Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [
+                    {
+                      "detailed_feedback": "Each ID must be a valid UUID.",
+                      "source": "query.ids"
+                    }
+                  ],
+                  "error": {
+                    "input": {
+                      "invalid_field": "Validation failed"
+                    }
+                  },
+                  "message": "Input validation failed for query_params"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse_Value"
+                },
+                "example": {
+                  "details": [],
+                  "error": {
+                    "database": {
+                      "retrieval_error": "account"
+                    }
+                  },
+                  "message": "Failed to retrieve account due to an internal error."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "APIResponseError": {
+        "type": "object",
+        "description": "Represents an error that occurred during API processing.",
+        "required": [
+          "error",
+          "message",
+          "details"
+        ],
+        "properties": {
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/APIResponseErrorDetail"
+            },
+            "description": "List of specific error details (e.g., field validation issues)."
+          },
+          "error": {
+            "$ref": "#/components/schemas/CadenceError",
+            "description": "Structured error code and details."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable message describing the overall error.",
+            "example": "Input validation failed"
+          }
+        }
+      },
+      "APIResponseErrorDetail": {
+        "type": "object",
+        "description": "Provides specific details about an error, often related to a request field.",
+        "required": [
+          "detailed_feedback"
+        ],
+        "properties": {
+          "detailed_feedback": {
+            "type": "string",
+            "description": "Detailed feedback on the specific issue.",
+            "example": "Field 'email' must be a valid email address."
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Source of the error (e.g., field name in the request body).",
+            "example": "body.name"
+          }
+        }
+      },
+      "APIResponseMetadata": {
+        "type": "object",
+        "description": "Metadata about the API response.",
+        "required": [
+          "api_version",
+          "status",
+          "http_status",
+          "timestamp",
+          "data_type"
+        ],
+        "properties": {
+          "api_version": {
+            "type": "string",
+            "description": "API version used (e.g., \"v1.0\").",
+            "example": "v1.0"
+          },
+          "data_type": {
+            "$ref": "#/components/schemas/APIResponseObjectType",
+            "description": "Primary object type contained in the `data` field."
+          },
+          "http_status": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "status": {
+            "$ref": "#/components/schemas/APIResponseStatus",
+            "description": "General status of the response."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC timestamp of response generation (ISO 8601).",
+            "example": "2023-10-01T12:00:00Z"
+          }
+        }
+      },
+      "APIResponseObjectType": {
+        "type": "string",
+        "description": "Primary object types that can be returned in the API response `data` field.",
+        "enum": [
+          "account",
+          "event_metadata",
+          "event_time",
+          "recurrence",
+          "exception",
+          "goal",
+          "tag",
+          "flag",
+          "email",
+          "external_identity",
+          "energy",
+          "unknown",
+          "auth",
+          "none"
+        ]
+      },
+      "APIResponseStatus": {
+        "type": "string",
+        "description": "General status of the API response.",
+        "enum": [
+          "success",
+          "failure"
+        ]
+      },
+      "APIResponse_CensoredAccountResponse": {
+        "type": "object",
+        "description": "Generic structure for all API responses.",
+        "required": [
+          "metadata"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "id",
+              "country_code",
+              "created_at",
+              "updated_at"
+            ],
+            "properties": {
+              "country_code": {
+                "type": "string",
+                "example": "US"
+              },
+              "created_at": {
+                "type": "integer",
+                "format": "int64",
+                "example": 1
+              },
+              "id": {
+                "type": "string",
+                "example": "578fd25e-b817-4ddb-9e03-531623ef66e7"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "example": "John Doe"
+              },
+              "updated_at": {
+                "type": "integer",
+                "format": "int64",
+                "example": 1
+              }
+            }
+          },
+          "errors": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/APIResponseError",
+                "description": "Error details if the operation failed."
+              }
+            ]
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/APIResponseMetadata",
+            "description": "Metadata about the request and response."
+          }
+        }
+      },
+      "APIResponse_Value": {
+        "type": "object",
+        "description": "Generic structure for all API responses.",
+        "required": [
+          "metadata"
+        ],
+        "properties": {
+          "data": {},
+          "errors": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/APIResponseError",
+                "description": "Error details if the operation failed."
+              }
+            ]
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/APIResponseMetadata",
+            "description": "Metadata about the request and response."
+          }
+        }
+      },
+      "APIResponse_Vec_CensoredAccountResponse": {
+        "type": "object",
+        "description": "Generic structure for all API responses.",
+        "required": [
+          "metadata"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "country_code",
+                "created_at",
+                "updated_at"
+              ],
+              "properties": {
+                "country_code": {
+                  "type": "string",
+                  "example": "US"
+                },
+                "created_at": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "id": {
+                  "type": "string",
+                  "example": "bbe793ef-378e-4a61-b06c-f2db2a90704c"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "example": "John Doe"
+                },
+                "updated_at": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                }
+              }
+            }
+          },
+          "errors": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/APIResponseError",
+                "description": "Error details if the operation failed."
+              }
+            ]
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/APIResponseMetadata",
+            "description": "Metadata about the request and response."
+          }
+        }
+      },
+      "AccountCreateRequest": {
+        "type": "object",
+        "description": "Represents the data required to create a new Account via email/password registration.",
+        "required": [
+          "email",
+          "password",
+          "password_confirmation",
+          "country_code"
+        ],
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "description": "User's country code (ISO 3166-1 alpha-2).",
+            "example": "US",
+            "maxLength": 2,
+            "minLength": 2
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's primary email address (will be linked to the account).",
+            "example": "user@example.com"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "User's display name (optional).",
+            "example": "John Doe"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's desired password.\nShould meet complexity requirements enforced by the service.",
+            "example": "VeryStrongP@ssw0rd!",
+            "writeOnly": true,
+            "minLength": 8
+          },
+          "password_confirmation": {
+            "type": "string",
+            "description": "Confirmation of the user's password.\nMust match the `password` field. Checked by the service.",
+            "example": "VeryStrongP@ssw0rd!",
+            "writeOnly": true
+          }
+        }
+      },
+      "AccountUpdateRequest": {
+        "type": "object",
+        "description": "Represents the data required to update an Account.",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "country_code": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "New country code (optional).",
+            "example": "CA",
+            "maxLength": 2,
+            "minLength": 2
+          },
+          "id": {
+            "type": "string",
+            "example": "1234567890abcdef1234567890abcdef"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "New display name (optional). Send null to clear, omit to keep unchanged.",
+            "example": "Johnathan Doe"
+          },
+          "password": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "VeryStrongP@ssw0rd!",
+            "writeOnly": true,
+            "minLength": 8
+          },
+          "password_confirmation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "VeryStrongP@ssw0rd!",
+            "writeOnly": true
+          }
+        }
+      },
+      "AuthError": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "unauthorized"
+            ],
+            "properties": {
+              "unauthorized": {
+                "type": "string"
+              }
+            },
+            "example": "Authentication required"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_request"
+            ],
+            "properties": {
+              "invalid_request": {
+                "type": "string"
+              }
+            },
+            "example": "OAuth request malformed"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_response"
+            ],
+            "properties": {
+              "invalid_response": {
+                "type": "string"
+              }
+            },
+            "example": "OAuth provider response invalid"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_credentials"
+            ],
+            "properties": {
+              "invalid_credentials": {
+                "type": "string"
+              }
+            },
+            "example": "Incorrect username or password"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_token"
+            ],
+            "properties": {
+              "invalid_token": {
+                "type": "string"
+              }
+            },
+            "example": "JWT expired or invalid"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_signature"
+            ],
+            "properties": {
+              "invalid_signature": {
+                "type": "string"
+              }
+            },
+            "example": "Token signature mismatch"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_scope"
+            ],
+            "properties": {
+              "invalid_scope": {
+                "type": "string"
+              }
+            },
+            "example": "Insufficient scope"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_grant"
+            ],
+            "properties": {
+              "invalid_grant": {
+                "type": "string"
+              }
+            },
+            "example": "Authorization code expired"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_client"
+            ],
+            "properties": {
+              "invalid_client": {
+                "type": "string"
+              }
+            },
+            "example": "Invalid OAuth client ID"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_redirect_uri"
+            ],
+            "properties": {
+              "invalid_redirect_uri": {
+                "type": "string"
+              }
+            },
+            "example": "Redirect URI mismatch"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_audience"
+            ],
+            "properties": {
+              "invalid_audience": {
+                "type": "string"
+              }
+            },
+            "example": "Token audience invalid"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_issuer"
+            ],
+            "properties": {
+              "invalid_issuer": {
+                "type": "string"
+              }
+            },
+            "example": "Token issuer invalid"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_subject"
+            ],
+            "properties": {
+              "invalid_subject": {
+                "type": "string"
+              }
+            },
+            "example": "Token subject invalid"
+          },
+          {
+            "type": "object",
+            "required": [
+              "internal_server_error"
+            ],
+            "properties": {
+              "internal_server_error": {
+                "type": "string"
+              }
+            },
+            "example": "Error issuing token"
+          },
+          {
+            "type": "object",
+            "required": [
+              "expired_token"
+            ],
+            "properties": {
+              "expired_token": {
+                "type": "string"
+              }
+            },
+            "example": "Token expired"
+          },
+          {
+            "type": "object",
+            "required": [
+              "missing_token"
+            ],
+            "properties": {
+              "missing_token": {
+                "type": "string"
+              }
+            },
+            "example": "Authorization header required"
+          },
+          {
+            "type": "object",
+            "required": [
+              "mismatch_token"
+            ],
+            "properties": {
+              "mismatch_token": {
+                "type": "string"
+              }
+            },
+            "example": "Token mismatch"
+          }
+        ],
+        "description": "Detailed authentication/authorization errors."
+      },
+      "CadenceError": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "input"
+            ],
+            "properties": {
+              "input": {
+                "$ref": "#/components/schemas/InputError"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "auth"
+            ],
+            "properties": {
+              "auth": {
+                "$ref": "#/components/schemas/AuthError"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "entity"
+            ],
+            "properties": {
+              "entity": {
+                "$ref": "#/components/schemas/EntityError"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "database"
+            ],
+            "properties": {
+              "database": {
+                "$ref": "#/components/schemas/DatabaseError"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "server_error"
+            ],
+            "properties": {
+              "server_error": {
+                "$ref": "#/components/schemas/ServerError"
+              }
+            }
+          }
+        ]
+      },
+      "CensoredAccountResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "country_code",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "example": "US"
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "id": {
+            "type": "string",
+            "example": "64d09aa8-961e-4b8e-99b5-ba908f6781d5"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "John Doe"
+          },
+          "updated_at": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          }
+        }
+      },
+      "DatabaseError": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "connection_failed"
+            ],
+            "properties": {
+              "connection_failed": {
+                "type": "string"
+              }
+            },
+            "example": "Database connection failed"
+          },
+          {
+            "type": "object",
+            "required": [
+              "query_failed"
+            ],
+            "properties": {
+              "query_failed": {
+                "type": "string"
+              }
+            },
+            "example": "Query execution failed"
+          },
+          {
+            "type": "object",
+            "required": [
+              "transaction_failed"
+            ],
+            "properties": {
+              "transaction_failed": {
+                "type": "string"
+              }
+            },
+            "example": "Transaction rollback required"
+          },
+          {
+            "type": "object",
+            "required": [
+              "timeout"
+            ],
+            "properties": {
+              "timeout": {
+                "type": "string"
+              }
+            },
+            "example": "Database timeout occurred"
+          },
+          {
+            "type": "object",
+            "required": [
+              "deadlock"
+            ],
+            "properties": {
+              "deadlock": {
+                "type": "string"
+              }
+            },
+            "example": "Database deadlock detected"
+          },
+          {
+            "type": "object",
+            "required": [
+              "constraint_violation"
+            ],
+            "properties": {
+              "constraint_violation": {
+                "type": "string"
+              }
+            },
+            "example": "Database constraint violation"
+          },
+          {
+            "type": "object",
+            "required": [
+              "insertion_error"
+            ],
+            "properties": {
+              "insertion_error": {
+                "type": "string"
+              }
+            },
+            "example": "Database schema mismatch"
+          },
+          {
+            "type": "object",
+            "required": [
+              "update_error"
+            ],
+            "properties": {
+              "update_error": {
+                "type": "string"
+              }
+            },
+            "example": "Database schema mismatch"
+          },
+          {
+            "type": "object",
+            "required": [
+              "deletion_error"
+            ],
+            "properties": {
+              "deletion_error": {
+                "type": "string"
+              }
+            },
+            "example": "Database schema mismatch"
+          },
+          {
+            "type": "object",
+            "required": [
+              "retrieval_error"
+            ],
+            "properties": {
+              "retrieval_error": {
+                "type": "string"
+              }
+            },
+            "example": "Database schema mismatch"
+          },
+          {
+            "type": "object",
+            "required": [
+              "record_not_found"
+            ],
+            "properties": {
+              "record_not_found": {
+                "type": "string"
+              }
+            },
+            "example": "Database schema mismatch"
+          }
+        ]
+      },
+      "EntityError": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "not_found"
+            ],
+            "properties": {
+              "not_found": {
+                "type": "string"
+              }
+            },
+            "example": "Goal with ID 123 not found"
+          },
+          {
+            "type": "object",
+            "required": [
+              "already_exists"
+            ],
+            "properties": {
+              "already_exists": {
+                "type": "string"
+              }
+            },
+            "example": "Email address 'test@example.com' already registered"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_state"
+            ],
+            "properties": {
+              "invalid_state": {
+                "type": "string"
+              }
+            },
+            "example": "Cannot modify a completed order"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_transition"
+            ],
+            "properties": {
+              "invalid_transition": {
+                "type": "string"
+              }
+            },
+            "example": "Cannot transition task from 'Done' to 'Todo'"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_association"
+            ],
+            "properties": {
+              "invalid_association": {
+                "type": "string"
+              }
+            },
+            "example": "User cannot be linked to this project"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_relation"
+            ],
+            "properties": {
+              "invalid_relation": {
+                "type": "string"
+              }
+            },
+            "example": "Inconsistent relation found"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_reference"
+            ],
+            "properties": {
+              "invalid_reference": {
+                "type": "string"
+              }
+            },
+            "example": "Referenced entity does not exist"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_foreign_key"
+            ],
+            "properties": {
+              "invalid_foreign_key": {
+                "type": "string"
+              }
+            },
+            "example": "Foreign key violation on user_id"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_unique_constraint"
+            ],
+            "properties": {
+              "invalid_unique_constraint": {
+                "type": "string"
+              }
+            },
+            "example": "Unique constraint violation on username"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_integrity"
+            ],
+            "properties": {
+              "invalid_integrity": {
+                "type": "string"
+              }
+            },
+            "example": "Data integrity violation"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_data_type"
+            ],
+            "properties": {
+              "invalid_data_type": {
+                "type": "string"
+              }
+            },
+            "example": "Data type mismatch"
+          }
+        ],
+        "description": "Detailed business logic/entity related errors."
+      },
+      "GetAccountQuery": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        }
+      },
+      "GetAccountsQuery": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        }
+      },
+      "InputError": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "missing_field"
+            ],
+            "properties": {
+              "missing_field": {
+                "type": "string"
+              }
+            },
+            "example": "email"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_field"
+            ],
+            "properties": {
+              "invalid_field": {
+                "type": "string"
+              }
+            },
+            "example": "userId format is incorrect"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_value"
+            ],
+            "properties": {
+              "invalid_value": {
+                "type": "string"
+              }
+            },
+            "example": "age must be positive"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_type"
+            ],
+            "properties": {
+              "invalid_type": {
+                "type": "string"
+              }
+            },
+            "example": "expected number, got string"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_format"
+            ],
+            "properties": {
+              "invalid_format": {
+                "type": "string"
+              }
+            },
+            "example": "date must be yyyy-MM-dd"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_length"
+            ],
+            "properties": {
+              "invalid_length": {
+                "type": "string"
+              }
+            },
+            "example": "password must be at least 8 characters"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_range"
+            ],
+            "properties": {
+              "invalid_range": {
+                "type": "string"
+              }
+            },
+            "example": "value must be between 1 and 100"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_pattern"
+            ],
+            "properties": {
+              "invalid_pattern": {
+                "type": "string"
+              }
+            },
+            "example": "field must match regex XYZ"
+          },
+          {
+            "type": "object",
+            "required": [
+              "invalid_enum_value"
+            ],
+            "properties": {
+              "invalid_enum_value": {
+                "type": "string"
+              }
+            },
+            "example": "status must be one of [active, inactive]"
+          }
+        ],
+        "description": "Detailed input validation errors."
+      },
+      "ServerError": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "internal_error"
+            ],
+            "properties": {
+              "internal_error": {
+                "type": "string"
+              }
+            },
+            "example": "Internal server error occurred"
+          },
+          {
+            "type": "object",
+            "required": [
+              "service_unavailable"
+            ],
+            "properties": {
+              "service_unavailable": {
+                "type": "string"
+              }
+            },
+            "example": "Service unavailable"
+          },
+          {
+            "type": "object",
+            "required": [
+              "gateway_timeout"
+            ],
+            "properties": {
+              "gateway_timeout": {
+                "type": "string"
+              }
+            },
+            "example": "Gateway timeout occurred"
+          },
+          {
+            "type": "object",
+            "required": [
+              "bad_request"
+            ],
+            "properties": {
+              "bad_request": {
+                "type": "string"
+              }
+            },
+            "example": "Bad request format"
+          },
+          {
+            "type": "object",
+            "required": [
+              "enviroment_parse_error"
+            ],
+            "properties": {
+              "enviroment_parse_error": {
+                "type": "string"
+              }
+            },
+            "example": "Unsupported media type"
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bearer_auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Bearer token authentication using JWT."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Account",
+      "description": "Account management operations (CRUD)"
+    }
+  ]
+}

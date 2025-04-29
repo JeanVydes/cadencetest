@@ -1,0 +1,5 @@
+/target
+/cadence-macros
+/node_modules
+*.env
+*.log

@@ -1,0 +1,32 @@
+[package]
+name = "cadence-common"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# cadence-macros = { path = "../cadence-macros" }
+serde = { version = "1.0", features = ["derive"] }
+strum = { version = "0.27", features = ["derive"] }
+tokio = { version = "1.0", features = ["full"] }
+chrono = { version = "0.4", features = ["serde"] }
+sea-orm = "1.1.8"
+uuid = { version = "1", features = ["v4"] }
+tracing = "0.1.41"
+tracing-subscriber = {version = "0.3", features = ["chrono"] }
+async-trait = "0.1"
+serde_json = "1.0.140"
+utoipa = { version = "5.3.1", features = ["chrono", "uuid"] }
+axum = { version = "0.8", features = ["json", "tracing", "tokio", "macros"] }
+regex = "1.11.1"
+bcrypt = "0.17.0"
+rustls = "0.23.26"
+tokio-rustls = "0.26.2"
+rustls-pemfile = "2.2.0"
+rcgen = "0.13.2"
+dotenvy = "0.15.7"
+envy = "0.4.2"
+tower = { version = "0.5", features = ["make"] }
+hyper = { version = "1.6.0", features = ["http1", "http2"] }
+hyper-util = { version = "0.1", features = ["tokio", "server-auto", "http1", "http2"] }
+axum-server = { version = "0.7.2", features = ["tls-rustls"] }
+jsonwebtoken = "9.3.1"

@@ -1,0 +1,3 @@
+[workspace]
+resolver = "3"
+members = ["api-docs", "iam-service", "cadence-common", "nervio-limiter"]
